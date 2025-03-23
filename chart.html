@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <title>Lightweight Charts z CDN</title>
+</head>
+<body>
+  <h1>Wykres z Lightweight Charts (CDN)</h1>
+  <div id="chart" style="width: 600px; height: 400px; margin: 0 auto; background: #f0f0f0;"></div>
+
+  <!-- Ładujemy bibliotekę z CDN (zawsze najnowsza wersja) -->
+  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const chartContainer = document.getElementById('chart');
+      if (!chartContainer) return;
+
+      const chart = LightweightCharts.createChart(chartContainer, {
+        width: 600,
+        height: 400,
+      });
+
+      const lineSeries = chart.addLineSeries();
+      lineSeries.setData([
+        { time: '2023-03-01', value: 100 },
+        { time: '2023-03-02', value: 105 },
+        { time: '2023-03-03', value: 102 },
+      ]);
+    });
+  </script>
+</body>
+</html>
