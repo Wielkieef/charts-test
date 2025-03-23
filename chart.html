@@ -2,7 +2,17 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8">
-  <title>Lightweight Charts z CDN</title>
+  <title>Wykres Lightweight Charts z CSP</title>
+  <!-- Dodajemy politykę CSP: dozwolone są skrypty z własnego źródła oraz z unpkg.com, a także dozwolony unsafe-eval -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline';">
+  <style>
+    #chart {
+      width: 600px;
+      height: 400px;
+      margin: 0 auto;
+      background: #f0f0f0;
+    }
+  </style>
 </head>
 <body>
   <h1>Wykres z Lightweight Charts (CDN)</h1>
