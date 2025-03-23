@@ -2,9 +2,13 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8">
-  <title>Wykres Lightweight Charts z CSP</title>
-  <!-- Dodajemy politykę CSP: dozwolone są skrypty z własnego źródła oraz z unpkg.com, a także dozwolony unsafe-eval -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline';">
+  <title>Wykres Lightweight Charts (CDN)</title>
+  <!-- Możesz wstawić meta CSP tutaj, bez 'unsafe-inline' -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' https://unpkg.com;
+    style-src 'self' 'unsafe-inline';
+  ">
   <style>
     #chart {
       width: 600px;
@@ -16,28 +20,11 @@
 </head>
 <body>
   <h1>Wykres z Lightweight Charts (CDN)</h1>
-  <div id="chart" style="width: 600px; height: 400px; margin: 0 auto; background: #f0f0f0;"></div>
+  <div id="chart"></div>
 
-  <!-- Ładujemy bibliotekę z CDN (zawsze najnowsza wersja) -->
+  <!-- Ładujemy Lightweight Charts z CDN -->
   <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const chartContainer = document.getElementById('chart');
-      if (!chartContainer) return;
-
-      const chart = LightweightCharts.createChart(chartContainer, {
-        width: 600,
-        height: 400,
-      });
-
-      const lineSeries = chart.addLineSeries();
-      lineSeries.setData([
-        { time: '2023-03-01', value: 100 },
-        { time: '2023-03-02', value: 105 },
-        { time: '2023-03-03', value: 102 },
-      ]);
-    });
-  </script>
+  <!-- Ładujemy nasz zewnętrzny plik .js z repo -->
+  <script src="main.js"></script>
 </body>
 </html>
