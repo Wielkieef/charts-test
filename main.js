@@ -6,7 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
     width: 600,
     height: 400,
   });
-  const lineSeries = chart.addLineSeries();
+  const lineSeries = chart.addLineSeries({
+    color: 'red',
+    lineWidth: 2,
+  });
   lineSeries.setData([
     { time: '2023-03-01', value: 100 },
     { time: '2023-03-02', value: 105 },
