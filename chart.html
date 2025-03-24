@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8">
   <title>Wykres strategii</title>
-  <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    script-src 'self' https://unpkg.com;
-    style-src 'self' 'unsafe-inline';
-  ">
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' https://unpkg.com;
+  connect-src https://api.binance.com;
+  style-src 'self' 'unsafe-inline';
+">
   <style>
     #chart {
       width: 100%;
