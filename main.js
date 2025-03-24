@@ -1,5 +1,6 @@
 // main.js
 import { getStrategy1AData } from './strategies/Strategy-1A.js';
+import { getStrategy1AMarkers } from './strategies/Strategy-1A-markers.js';
 
 document.addEventListener('DOMContentLoaded', function () {
   const chartContainer = document.getElementById('chart');
@@ -23,5 +24,9 @@ document.addEventListener('DOMContentLoaded', function () {
     lineWidth: 2,
   });
 
+  // Dodajemy dane wykresu
   lineSeries.setData(getStrategy1AData());
+
+  // Dodajemy markery
+  lineSeries.setMarkers(getStrategy1AMarkers());
 });
