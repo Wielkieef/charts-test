@@ -1,3 +1,10 @@
+export const strategyMeta = {
+  name: '1A',
+  symbol: 'BTCUSDT',
+  interval: '4h',
+  source: 'binance',
+};
+
 export async function getData() {
   const interval = '4h';
   const symbol = 'BTCUSDT';
@@ -23,4 +30,39 @@ export async function getData() {
     low: parseFloat(candle[3]),
     close: parseFloat(candle[4]),
   }));
+}
+
+export async function getMarkers(candles) {
+  try {
+    const res = await fetch(
+      'https://europe-central2-big-bliss-342920.cloudfunctions.net/markers?strategy=1A',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'abc123XYZsecret', // <-- Twój klucz API tutaj (taki jak w zmiennej środowiskowej GCP)
+        },
+        body: JSON.stringify({ candles }),
+      }
+    );
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error('❌ Błąd odpowiedzi z backendu:', errorText);
+      return [];
+    }
+
+    const markers = await res.json();
+
+    if (!Array.isArray(markers)) {
+      console.error('❌ Nieprawidłowy format odpowiedzi z backendu:', markers);
+      return [];
+    }
+
+    console.log(`✅ Markery odebrane: ${markers.length}`);
+    return markers;
+  } catch (err) {
+    console.error('❌ Błąd w getMarkers:', err);
+    return [];
+  }
 }
