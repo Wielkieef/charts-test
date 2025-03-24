@@ -1,20 +1,26 @@
-
-// Strategy-1A-markers.js
+// strategies/Strategy-1A-markers.js
 export function getStrategy1AMarkers() {
   return [
     {
       time: '2023-03-01',
-      position: 'aboveBar',
+      position: 'belowBar',
       color: 'blue',
       shape: 'arrowUp',
-      text: 'Long'
+      text: 'LONG',
     },
     {
       time: '2023-03-03',
-      position: 'belowBar',
+      position: 'aboveBar',
       color: 'purple',
       shape: 'arrowDown',
-      text: 'Close'
-    }
+      text: 'CLOSE',
+    },
+    {
+      time: '2023-03-02',
+      position: 'aboveBar',
+      color: 'purple',
+      shape: 'arrowDown',
+      text: 'SL', // stop-loss
+    },
   ];
 }
