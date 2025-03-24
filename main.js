@@ -1,8 +1,4 @@
-// main.js
-import { getStrategy1AData } from './strategies/Strategy-1A.js';
-import { getStrategy1AMarkers } from './strategies/Strategy-1A-markers.js';
-
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
   const chartContainer = document.getElementById('chart');
   if (!chartContainer) return;
 
@@ -19,12 +15,24 @@ document.addEventListener('DOMContentLoaded', function () {
     },
   });
 
-  // ŚWIECOWY wykres zamiast linii
   const candleSeries = chart.addCandlestickSeries();
 
-  // Ustaw dane do świec (open, high, low, close)
-  candleSeries.setData(getStrategy1AData());
+  try {
+    const response = await fetch(
+      'https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=4h&limit=100'
+    );
+    const data = await response.json();
 
-  // Dodaj markery do tej serii
-  candleSeries.setMarkers(getStrategy1AMarkers());
+    const formattedData = data.map(candle => ({
+      time: candle[0] / 1000, // ms → UNIX seconds
+      open: parseFloat(candle[1]),
+      high: parseFloat(candle[2]),
+      low: parseFloat(candle[3]),
+      close: parseFloat(candle[4]),
+    }));
+
+    candleSeries.setData(formattedData);
+  } catch (err) {
+    console.error('Błąd pobierania danych z Binance:', err);
+  }
 });
