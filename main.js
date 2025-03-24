@@ -1,33 +1,32 @@
 import { strategyMeta, getData, getMarkers } from './strategies/Strategy-1A.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const chartContainer = document.getElementById('chart');
-  if (!chartContainer) return;
+const chartContainer = document.getElementById('chart');
 
-  document.querySelector('h1').textContent = `Strategia: ${strategyMeta.name}`;
+const chart = LightweightCharts.createChart(chartContainer, {
+  width: chartContainer.clientWidth,
+  height: 500,
+  layout: {
+    background: { color: '#f0f0f0' },
+    textColor: 'black',
+  },
+  grid: {
+    vertLines: { color: '#e0e0e0' },
+    horzLines: { color: '#e0e0e0' },
+  },
+});
 
-  const chart = LightweightCharts.createChart(chartContainer, {
-    width: 800,
-    height: 500,
-    layout: {
-      background: { color: '#f0f0f0' },
-      textColor: '#000',
-    },
-    grid: {
-      vertLines: { color: '#e0e0e0' },
-      horzLines: { color: '#e0e0e0' },
-    },
-  });
+const candleSeries = chart.addCandlestickSeries();
 
-  const candleSeries = chart.addCandlestickSeries();
-
+async function loadChart() {
   try {
     const data = await getData();
-    const markers = await getMarkers();
-
     candleSeries.setData(data);
+
+    const markers = await getMarkers();
     candleSeries.setMarkers(markers);
-  } catch (error) {
-    console.error('Błąd podczas ładowania danych:', error);
+  } catch (err) {
+    console.error('Błąd wczytywania danych:', err);
   }
-});
+}
+
+loadChart();
