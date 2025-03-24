@@ -35,7 +35,15 @@ export async function getMarkers(candles) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(candles),
+        body: JSON.stringify({
+          candles: candles.map((c) => ({
+            time: c.time,
+            open: c.open,
+            high: c.high,
+            low: c.low,
+            close: c.close,
+          })),
+        }),
       }
     );
 
