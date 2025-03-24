@@ -2,11 +2,11 @@ export const strategyMeta = {
   name: '1A',
   symbol: 'BTCUSDT',
   interval: '4h',
-  source: 'binance',
+  source: 'local'
 };
 
 export async function getData() {
-  // tymczasowe dane świec (candlestick)
+  // Przykladowe dane świec (candlestick)
   return [
     { time: 1710806400, open: 100, high: 105, low: 95, close: 102 },
     { time: 1710820800, open: 102, high: 108, low: 100, close: 107 },
@@ -29,6 +29,6 @@ export async function getMarkers() {
       color: 'purple',
       shape: 'arrowDown',
       text: 'Close',
-    }
+    },
   ];
 }
