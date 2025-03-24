@@ -1,9 +1,8 @@
-<!-- chart.html -->
 <!DOCTYPE html>
 <html lang="pl">
 <head>
   <meta charset="utf-8">
-  <title>Wykres strategii 1A</title>
+  <title>Wykres strategii</title>
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     script-src 'self' https://unpkg.com;
@@ -11,17 +10,21 @@
   ">
   <style>
     #chart {
-      width: 800px;
-      height: 500px;
+      width: 100%;
+      height: 600px;
       margin: 0 auto;
       background: #f0f0f0;
     }
   </style>
 </head>
 <body>
-  <h1>Wykres strategii: 1A</h1>
+  <h1 id="strategy-title">Wczytywanie strategii...</h1>
   <div id="chart"></div>
+
+  <!-- biblioteka Lightweight Charts -->
   <script src="https://unpkg.com/lightweight-charts@4.0.0/dist/lightweight-charts.standalone.production.js"></script>
+
+  <!-- główny skrypt -->
   <script type="module" src="main.js"></script>
 </body>
 </html>
