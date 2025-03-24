@@ -2,28 +2,27 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8">
-  <title>Wykres Strategii 1A</title>
+  <title>Wykres Lightweight Charts (CDN)</title>
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     script-src 'self' https://unpkg.com;
     style-src 'self' 'unsafe-inline';
   ">
   <style>
-    /* Styl dla kontenera wykresu */
-    #chart-1A {
+    #chart {
       width: 600px;
       height: 400px;
-      margin: 20px auto;
+      margin: 0 auto;
       background: #f0f0f0;
     }
   </style>
 </head>
 <body>
-  <h1>Strategia 1A</h1>
-  <div id="chart-1A"></div>
-  <!-- Ładujemy bibliotekę Lightweight Charts z CDN -->
+  <h1>Wykres z Lightweight Charts (CDN)</h1>
+  <div id="chart"></div>
+  <!-- Ładujemy bibliotekę z CDN -->
   <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
-  <!-- Ładujemy nasz zewnętrzny plik main.js -->
+  <!-- Ładujemy zewnętrzny plik JS -->
   <script src="main.js"></script>
 </body>
 </html>
