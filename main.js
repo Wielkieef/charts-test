@@ -1,55 +1,37 @@
-// main.js
-import { getStrategy1AData } from './strategies/Strategy-1A.js';
-import { getStrategy1AMarkers } from './strategies/Strategy-1A-signals.js';
-
-document.addEventListener('DOMContentLoaded', async function () {
+document.addEventListener('DOMContentLoaded', async () => {
   const chartContainer = document.getElementById('chart');
-  const statusText = document.getElementById('status');
-  if (!chartContainer) return;
+  const title = document.querySelector('h1');
 
-  const chart = LightweightCharts.createChart(chartContainer, {
-    width: 800,
-    height: 500,
-    layout: {
-      background: { color: '#f0f0f0' },
-      textColor: '#000',
-    },
-    grid: {
-      vertLines: { color: '#e0e0e0' },
-      horzLines: { color: '#e0e0e0' },
-    },
-  });
-
-  const lineSeries = chart.addCandlestickSeries();
+  const params = new URLSearchParams(window.location.search);
+  const strategyName = params.get("strategy") || "Strategy-1A";
 
   try {
-    // Pobieramy dane z Binance (3 miesiące interwał 4h)
-    const symbol = 'BTCUSDT';
-    const interval = '4h';
-    const limit = 500;
-    const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
+    const module = await import(`./strategies/${strategyName}.js`);
+    const { strategyMeta, getData, getMarkers } = module;
 
-    const response = await fetch(url);
-    const raw = await response.json();
+    title.textContent = `Strategia: ${strategyMeta.name}`;
 
-    const candles = raw.map(c => ({
-      time: Math.floor(c[0] / 1000),
-      open: parseFloat(c[1]),
-      high: parseFloat(c[2]),
-      low: parseFloat(c[3]),
-      close: parseFloat(c[4]),
-      value: parseFloat(c[4]) // for strategy logic
-    }));
+    const chart = LightweightCharts.createChart(chartContainer, {
+      width: 800,
+      height: 500,
+      layout: {
+        background: { color: '#f0f0f0' },
+        textColor: '#000',
+      },
+      grid: {
+        vertLines: { color: '#e0e0e0' },
+        horzLines: { color: '#e0e0e0' },
+      },
+    });
 
-    lineSeries.setData(candles);
+    const candleSeries = chart.addCandlestickSeries();
+    const candles = await getData();
+    candleSeries.setData(candles);
 
-    // MARKERY ZE STRATEGII
-    const markers = getStrategy1AMarkers(candles);
-    lineSeries.setMarkers(markers);
-
-    statusText.textContent = 'Strategia załadowana.';
-  } catch (err) {
-    console.error('Błąd pobierania danych z Binance:', err);
-    statusText.textContent = 'Błąd ładowania strategii.';
+    const markers = await getMarkers();
+    candleSeries.setMarkers(markers);
+  } catch (error) {
+    title.textContent = 'Błąd podczas ładowania strategii.';
+    console.error('Błąd ładowania strategii:', error);
   }
 });
