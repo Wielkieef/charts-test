@@ -2,33 +2,36 @@ export const strategyMeta = {
   name: '1A',
   symbol: 'BTCUSDT',
   interval: '4h',
-  source: 'local'
+  source: 'binance',
 };
 
 export async function getData() {
-  // Przykladowe dane świec (candlestick)
-  return [
-    { time: 1710806400, open: 100, high: 105, low: 95, close: 102 },
-    { time: 1710820800, open: 102, high: 108, low: 100, close: 107 },
-    { time: 1710835200, open: 107, high: 109, low: 103, close: 105 },
-  ];
+  const symbol = strategyMeta.symbol;
+  const interval = '4h';
+  const limit = 500; // Maksymalna liczba świec na jedno zapytanie
+  const endTime = Date.now();
+  const startTime = endTime - 90 * 24 * 60 * 60 * 1000; // Ostatnie 90 dni
+
+  const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&startTime=${startTime}&endTime=${endTime}&limit=${limit}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    return data.map(candle => ({
+      time: candle[0] / 1000,
+      open: parseFloat(candle[1]),
+      high: parseFloat(candle[2]),
+      low: parseFloat(candle[3]),
+      close: parseFloat(candle[4]),
+    }));
+  } catch (error) {
+    console.error('Błąd podczas pobierania danych z Binance:', error);
+    return [];
+  }
 }
 
 export async function getMarkers() {
-  return [
-    {
-      time: 1710820800,
-      position: 'belowBar',
-      color: 'blue',
-      shape: 'arrowUp',
-      text: 'Long',
-    },
-    {
-      time: 1710835200,
-      position: 'aboveBar',
-      color: 'purple',
-      shape: 'arrowDown',
-      text: 'Close',
-    },
-  ];
+  // Tutaj dodaj logikę generowania markerów na podstawie pobranych danych
+  return [];
 }
