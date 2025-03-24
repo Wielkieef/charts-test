@@ -1,3 +1,4 @@
+// main.js
 import { getStrategy1AData } from './strategies/Strategy-1A.js';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -5,10 +6,10 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!chartContainer) return;
 
   const chart = LightweightCharts.createChart(chartContainer, {
-    width: chartContainer.clientWidth,
-    height: chartContainer.clientHeight,
+    width: 800,
+    height: 500,
     layout: {
-      background: { color: '#ffffff' },
+      background: { color: '#f0f0f0' },
       textColor: '#000',
     },
     grid: {
@@ -22,6 +23,5 @@ document.addEventListener('DOMContentLoaded', function () {
     lineWidth: 2,
   });
 
-  const data = getStrategy1AData();
-  lineSeries.setData(data);
+  lineSeries.setData(getStrategy1AData());
 });
