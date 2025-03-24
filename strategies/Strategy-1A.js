@@ -15,6 +15,12 @@ export async function getData() {
   const response = await fetch(
     `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
   );
+
+  if (!response.ok) {
+    console.error('Błąd przy pobieraniu danych z Binance:', await response.text());
+    return [];
+  }
+
   const raw = await response.json();
 
   return raw.map((candle) => ({
@@ -35,15 +41,7 @@ export async function getMarkers(candles) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          candles: candles.map((c) => ({
-            time: c.time,
-            open: c.open,
-            high: c.high,
-            low: c.low,
-            close: c.close,
-          })),
-        }),
+        body: JSON.stringify({ candles }), // Ważne! Owinięcie tablicy w obiekt
       }
     );
 
@@ -54,6 +52,12 @@ export async function getMarkers(candles) {
     }
 
     const markers = await res.json();
+
+    if (!Array.isArray(markers)) {
+      console.error('Nieprawidłowy format odpowiedzi:', markers);
+      return [];
+    }
+
     return markers;
   } catch (err) {
     console.error('Błąd:', err);
