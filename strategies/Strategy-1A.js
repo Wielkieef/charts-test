@@ -18,28 +18,31 @@ export async function getData() {
     );
 
     if (!response.ok) {
-      console.error('Błąd przy pobieraniu danych z Binance:', await response.text());
+      console.error('❌ Błąd pobierania danych z Binance:', await response.text());
       return [];
     }
 
     const raw = await response.json();
 
-    return raw.map((candle) => ({
+    const parsed = raw.map((candle) => ({
       time: candle[0] / 1000,
       open: parseFloat(candle[1]),
       high: parseFloat(candle[2]),
       low: parseFloat(candle[3]),
       close: parseFloat(candle[4]),
     }));
-  } catch (err) {
-    console.error('Błąd w getData():', err);
+
+    console.log('✅ Dane z Binance:', parsed.length, 'świec');
+    return parsed;
+  } catch (error) {
+    console.error('❌ Wyjątek w getData:', error);
     return [];
   }
 }
 
 export async function getMarkers(candles) {
   if (!Array.isArray(candles) || candles.length === 0) {
-    console.error('getMarkers: Niepoprawne dane wejściowe:', candles);
+    console.error('⛔ getMarkers: Niepoprawne dane wejściowe:', candles);
     return [];
   }
 
@@ -51,26 +54,27 @@ export async function getMarkers(candles) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ candles }), // 🔧 owinięcie w { candles }
+        body: JSON.stringify({ candles }),
       }
     );
 
     if (!res.ok) {
       const errorText = await res.text();
-      console.error('Błąd przy pobieraniu markerów:', errorText);
+      console.error('❌ Błąd odpowiedzi z backendu:', errorText);
       return [];
     }
 
     const markers = await res.json();
 
     if (!Array.isArray(markers)) {
-      console.error('Nieprawidłowy format odpowiedzi:', markers);
+      console.error('❌ Odpowiedź nie jest tablicą:', markers);
       return [];
     }
 
+    console.log('✅ Markery odebrane:', markers.length);
     return markers;
   } catch (err) {
-    console.error('Błąd w getMarkers():', err);
+    console.error('❌ Wyjątek w getMarkers:', err);
     return [];
   }
 }
