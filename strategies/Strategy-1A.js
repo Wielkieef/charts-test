@@ -12,27 +12,37 @@ export async function getData() {
   const symbol = 'BTCUSDT';
   const limit = 500;
 
-  const response = await fetch(
-    `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
-  );
+  try {
+    const response = await fetch(
+      `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
+    );
 
-  if (!response.ok) {
-    console.error('Błąd przy pobieraniu danych z Binance:', await response.text());
+    if (!response.ok) {
+      console.error('Błąd przy pobieraniu danych z Binance:', await response.text());
+      return [];
+    }
+
+    const raw = await response.json();
+
+    return raw.map((candle) => ({
+      time: candle[0] / 1000,
+      open: parseFloat(candle[1]),
+      high: parseFloat(candle[2]),
+      low: parseFloat(candle[3]),
+      close: parseFloat(candle[4]),
+    }));
+  } catch (err) {
+    console.error('Błąd w getData():', err);
     return [];
   }
-
-  const raw = await response.json();
-
-  return raw.map((candle) => ({
-    time: candle[0] / 1000,
-    open: parseFloat(candle[1]),
-    high: parseFloat(candle[2]),
-    low: parseFloat(candle[3]),
-    close: parseFloat(candle[4]),
-  }));
 }
 
 export async function getMarkers(candles) {
+  if (!Array.isArray(candles) || candles.length === 0) {
+    console.error('getMarkers: Niepoprawne dane wejściowe:', candles);
+    return [];
+  }
+
   try {
     const res = await fetch(
       'https://europe-central2-big-bliss-342920.cloudfunctions.net/markers?strategy=1A',
@@ -41,7 +51,7 @@ export async function getMarkers(candles) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ candles }), // Ważne! Owinięcie tablicy w obiekt
+        body: JSON.stringify({ candles }), // 🔧 owinięcie w { candles }
       }
     );
 
@@ -60,7 +70,7 @@ export async function getMarkers(candles) {
 
     return markers;
   } catch (err) {
-    console.error('Błąd:', err);
+    console.error('Błąd w getMarkers():', err);
     return [];
   }
 }
