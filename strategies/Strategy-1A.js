@@ -1,3 +1,5 @@
+// Strategy-1A.js
+
 export const strategyMeta = {
   name: '1A',
   symbol: 'BTCUSDT',
@@ -10,19 +12,12 @@ export async function getData() {
   const symbol = 'BTCUSDT';
   const limit = 500;
 
-  const intervalMap = {
-    '1m': 60,
-    '5m': 300,
-    '15m': 900,
-    '1h': 3600,
-    '4h': 14400,
-    '1d': 86400,
-  };
-
-  const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`);
+  const response = await fetch(
+    `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
+  );
   const raw = await response.json();
 
-  return raw.map(candle => ({
+  return raw.map((candle) => ({
     time: candle[0] / 1000,
     open: parseFloat(candle[1]),
     high: parseFloat(candle[2]),
@@ -33,14 +28,20 @@ export async function getData() {
 
 export async function getMarkers(candles) {
   try {
-    const res = await fetch('https://europe-central2-big-bliss-342920.cloudfunctions.net/markers?strategy=1A', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(candles),
-    });
+    const res = await fetch(
+      'https://europe-central2-big-bliss-342920.cloudfunctions.net/markers?strategy=1A',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(candles),
+      }
+    );
 
     if (!res.ok) {
-      console.error('Błąd przy pobieraniu markerów:', await res.text());
+      const errorText = await res.text();
+      console.error('Błąd przy pobieraniu markerów:', errorText);
       return [];
     }
 
