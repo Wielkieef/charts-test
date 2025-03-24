@@ -19,13 +19,26 @@ const candleSeries = chart.addCandlestickSeries();
 
 async function loadChart() {
   try {
-    const data = await getData();
-    candleSeries.setData(data);
+    const candles = await getData();
 
-    const markers = await getMarkers();
-    candleSeries.setMarkers(markers);
+    if (!Array.isArray(candles) || candles.length === 0) {
+      console.error('⛔ Brak poprawnych danych świec:', candles);
+      return;
+    }
+
+    candleSeries.setData(candles);
+
+    const markers = await getMarkers(candles);
+
+    if (Array.isArray(markers)) {
+      candleSeries.setMarkers(markers);
+    } else {
+      console.warn('⚠️ Brak markerów do ustawienia.');
+    }
+
+    console.log('✅ Wykres i markery załadowane');
   } catch (err) {
-    console.error('Błąd wczytywania danych:', err);
+    console.error('❌ Błąd wczytywania danych:', err);
   }
 }
 
