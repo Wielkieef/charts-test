@@ -5,39 +5,37 @@ export const strategyMeta = {
   source: 'binance',
 };
 
-function intervalToBinance(interval) {
-  return {
-    '1m': '1m',
-    '5m': '5m',
-    '15m': '15m',
-    '1h': '1h',
-    '4h': '4h',
-    '1d': '1d',
-  }[interval] || '4h';
-}
-
+// Dane OHLC – mogą być z Binance lub statyczne
 export async function getData() {
-  const symbol = strategyMeta.symbol;
-  const interval = intervalToBinance(strategyMeta.interval);
-  const limit = 500; // ~3 miesiące danych 4h
-
-  const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
-
-  const response = await fetch(url);
-  if (!response.ok) throw new Error('Błąd API Binance');
-
+  const response = await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=4h&limit=500');
   const rawData = await response.json();
 
-  return rawData.map(d => ({
-    time: d[0] / 1000,
-    open: parseFloat(d[1]),
-    high: parseFloat(d[2]),
-    low: parseFloat(d[3]),
-    close: parseFloat(d[4]),
+  return rawData.map(([time, open, high, low, close]) => ({
+    time: Math.floor(time / 1000), // sekundowe timestampy
+    open: parseFloat(open),
+    high: parseFloat(high),
+    low: parseFloat(low),
+    close: parseFloat(close),
   }));
 }
 
+// Markery wygenerowane wcześniej – np. z PineScript, backendu itp.
 export async function getMarkers() {
-  // Tymczasowo PUSTE – gotowe do implementacji
-  return [];
+  return [
+    {
+      time: 1713489600, // timestamp w sekundach
+      position: 'belowBar',
+      color: 'blue',
+      shape: 'arrowUp',
+      text: 'Long',
+    },
+    {
+      time: 1713622800,
+      position: 'aboveBar',
+      color: 'purple',
+      shape: 'arrowDown',
+      text: 'Close',
+    },
+    // Dodaj kolejne sygnały zgodnie z logiką
+  ];
 }
