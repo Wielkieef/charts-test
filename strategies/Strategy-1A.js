@@ -1,26 +1,34 @@
-// strategies/Strategy-1A.js
-export function getStrategy1AData() {
+export const strategyMeta = {
+  name: '1A',
+  symbol: 'BTCUSDT',
+  interval: '4h',
+  source: 'binance',
+};
+
+export async function getData() {
+  // tymczasowe dane świec (candlestick)
+  return [
+    { time: 1710806400, open: 100, high: 105, low: 95, close: 102 },
+    { time: 1710820800, open: 102, high: 108, low: 100, close: 107 },
+    { time: 1710835200, open: 107, high: 109, low: 103, close: 105 },
+  ];
+}
+
+export async function getMarkers() {
   return [
     {
-      time: '2023-03-01',
-      open: 100,
-      high: 106,
-      low: 99,
-      close: 105,
+      time: 1710820800,
+      position: 'belowBar',
+      color: 'blue',
+      shape: 'arrowUp',
+      text: 'Long',
     },
     {
-      time: '2023-03-02',
-      open: 105,
-      high: 107,
-      low: 102,
-      close: 103,
-    },
-    {
-      time: '2023-03-03',
-      open: 103,
-      high: 104,
-      low: 100,
-      close: 102,
-    },
+      time: 1710835200,
+      position: 'aboveBar',
+      color: 'purple',
+      shape: 'arrowDown',
+      text: 'Close',
+    }
   ];
 }
