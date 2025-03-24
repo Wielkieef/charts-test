@@ -5,33 +5,39 @@ export const strategyMeta = {
   source: 'binance',
 };
 
+function intervalToBinance(interval) {
+  return {
+    '1m': '1m',
+    '5m': '5m',
+    '15m': '15m',
+    '1h': '1h',
+    '4h': '4h',
+    '1d': '1d',
+  }[interval] || '4h';
+}
+
 export async function getData() {
   const symbol = strategyMeta.symbol;
-  const interval = '4h';
-  const limit = 500; // Maksymalna liczba świec na jedno zapytanie
-  const endTime = Date.now();
-  const startTime = endTime - 90 * 24 * 60 * 60 * 1000; // Ostatnie 90 dni
+  const interval = intervalToBinance(strategyMeta.interval);
+  const limit = 500; // ~3 miesiące danych 4h
 
-  const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&startTime=${startTime}&endTime=${endTime}&limit=${limit}`;
+  const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
 
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('Błąd API Binance');
 
-    return data.map(candle => ({
-      time: candle[0] / 1000,
-      open: parseFloat(candle[1]),
-      high: parseFloat(candle[2]),
-      low: parseFloat(candle[3]),
-      close: parseFloat(candle[4]),
-    }));
-  } catch (error) {
-    console.error('Błąd podczas pobierania danych z Binance:', error);
-    return [];
-  }
+  const rawData = await response.json();
+
+  return rawData.map(d => ({
+    time: d[0] / 1000,
+    open: parseFloat(d[1]),
+    high: parseFloat(d[2]),
+    low: parseFloat(d[3]),
+    close: parseFloat(d[4]),
+  }));
 }
 
 export async function getMarkers() {
-  // Tutaj dodaj logikę generowania markerów na podstawie pobranych danych
+  // Tymczasowo PUSTE – gotowe do implementacji
   return [];
 }
