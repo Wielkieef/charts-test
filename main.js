@@ -1,38 +1,36 @@
-document.addEventListener('DOMContentLoaded', async function () {
-  const chartContainer = document.getElementById('chart');
-  if (!chartContainer) return;
+const symbol = 'BTCUSDT';
+const interval = '4h';
+const limit = 1000; // max dozwolone przez Binance
 
-  const chart = LightweightCharts.createChart(chartContainer, {
-    width: 800,
-    height: 500,
-    layout: {
-      background: { color: '#f0f0f0' },
-      textColor: '#000',
-    },
-    grid: {
-      vertLines: { color: '#e0e0e0' },
-      horzLines: { color: '#e0e0e0' },
-    },
-  });
+// Oblicz timestamp sprzed 90 dni
+const now = Date.now();
+const threeMonthsAgo = now - 90 * 24 * 60 * 60 * 1000;
 
-  const candleSeries = chart.addCandlestickSeries();
+const binanceUrl = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&startTime=${threeMonthsAgo}&limit=${limit}`;
 
-  // Pobierz dane z Binance API
-  try {
-    const response = await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=4h&limit=100');
-    const data = await response.json();
-
-    // Przekształć dane do formatu Lightweight Charts
-    const candles = data.map(item => ({
-      time: Math.floor(item[0] / 1000), // timestamp in seconds
-      open: parseFloat(item[1]),
-      high: parseFloat(item[2]),
-      low: parseFloat(item[3]),
-      close: parseFloat(item[4]),
+fetch(binanceUrl)
+  .then(res => res.json())
+  .then(data => {
+    const formattedData = data.map(candle => ({
+      time: Math.floor(candle[0] / 1000), // timestamp (w sekundach)
+      open: parseFloat(candle[1]),
+      high: parseFloat(candle[2]),
+      low: parseFloat(candle[3]),
+      close: parseFloat(candle[4]),
     }));
 
-    candleSeries.setData(candles);
-  } catch (err) {
-    console.error('Błąd podczas pobierania danych z Binance:', err);
-  }
-});
+    const chartContainer = document.getElementById('chart');
+    const chart = LightweightCharts.createChart(chartContainer, {
+      width: 800,
+      height: 500,
+    });
+
+    const series = chart.addCandlestickSeries();
+    series.setData(formattedData);
+
+    // Zmieniamy tekst nagłówka po załadowaniu
+    document.querySelector('h1').textContent = 'Strategia: 1A';
+  })
+  .catch(err => {
+    console.error('Błąd podczas pobierania danych:', err);
+  });
