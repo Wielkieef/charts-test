@@ -2,30 +2,36 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8">
-  <title>Wykres strategii</title>
-<meta http-equiv="Content-Security-Policy" content="
-  default-src 'self';
-  script-src 'self' https://unpkg.com;
-  connect-src https://api.binance.com;
-  style-src 'self' 'unsafe-inline';
-">
+  <title>Strategia: 1A</title>
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' https://unpkg.com;
+    connect-src 'self' https://api.binance.com;
+    style-src 'self' 'unsafe-inline';
+  ">
   <style>
+    body {
+      font-family: sans-serif;
+      background-color: #fff;
+      padding: 20px;
+    }
     #chart {
-      width: 100%;
-      height: 600px;
+      width: 800px;
+      height: 500px;
       margin: 0 auto;
       background: #f0f0f0;
+    }
+    h1 {
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1 id="strategy-title">Wczytywanie strategii...</h1>
+  <h1>Wczytywanie strategii...</h1>
   <div id="chart"></div>
 
-  <!-- biblioteka Lightweight Charts -->
+  <!-- Lightweight Charts -->
   <script src="https://unpkg.com/lightweight-charts@4.0.0/dist/lightweight-charts.standalone.production.js"></script>
-
-  <!-- główny skrypt -->
-  <script type="module" src="main.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
