@@ -19,14 +19,12 @@ document.addEventListener('DOMContentLoaded', function () {
     },
   });
 
-  const lineSeries = chart.addLineSeries({
-    color: 'red',
-    lineWidth: 2,
-  });
+  // ŚWIECOWY wykres zamiast linii
+  const candleSeries = chart.addCandlestickSeries();
 
-  // Dodajemy dane wykresu
-  lineSeries.setData(getStrategy1AData());
+  // Ustaw dane do świec (open, high, low, close)
+  candleSeries.setData(getStrategy1AData());
 
-  // Dodajemy markery
-  lineSeries.setMarkers(getStrategy1AMarkers());
+  // Dodaj markery do tej serii
+  candleSeries.setMarkers(getStrategy1AMarkers());
 });
