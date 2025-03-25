@@ -23,12 +23,12 @@ export async function getData() {
 export async function getMarkers(candles) {
   try {
     const res = await fetch(
-      `https://europe-central2-big-bliss-342920.cloudfunctions.net/markers?strategy=3B`,
+      `https://europe-central2-big-bliss-342920.cloudfunctions.net/markers?strategy=3A`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'abc123XYZsecret', // 🔐 Twój klucz API
+          'Authorization': 'abc123XYZsecret', // ← Twój klucz API
         },
         body: JSON.stringify({ candles }),
       }
@@ -47,4 +47,3 @@ export async function getMarkers(candles) {
     return [];
   }
 }
-
