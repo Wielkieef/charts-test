@@ -22,12 +22,12 @@ export async function getData() {
     result.unshift(...raw);
     endTime = raw[0][0] - 1;
 
-    if (result.length > 5000) break; // Bezpiecznik
+    if (result.length > 5000) break; // bezpiecznik
   }
 
   const sliced = result.slice(-total);
 
-  console.log(`✅ Dane z Binance: ${sliced.length} świec`);
+  console.log(`✅ Dane z Binance (1A): ${sliced.length} świec`);
 
   return sliced.map((candle) => ({
     time: candle[0] / 1000,
@@ -65,10 +65,10 @@ export async function getMarkers(candles) {
       return [];
     }
 
-    console.log(`✅ Markery odebrane: ${markers.length}`);
+    console.log(`✅ Markery odebrane (1A): ${markers.length}`);
     return markers;
   } catch (err) {
-    console.error('❌ Błąd w getMarkers:', err);
+    console.error('❌ Błąd w getMarkers (1A):', err);
     return [];
   }
 }
