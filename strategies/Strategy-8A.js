@@ -7,6 +7,7 @@ export async function getData() {
   const limit = 1500;
   const interval = strategyMeta.interval;
   const symbol = strategyMeta.symbol;
+
   const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`);
   const raw = await res.json();
 
@@ -27,7 +28,7 @@ export async function getMarkers(candles) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'abc123XYZsecret',
+          'Authorization': 'abc123XYZsecret', // ← Twój klucz API
         },
         body: JSON.stringify({ candles }),
       }
