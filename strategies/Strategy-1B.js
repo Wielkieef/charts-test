@@ -4,7 +4,7 @@ export const strategyMeta = {
 };
 
 export async function getData() {
-  const limit = 500;
+  const limit = 1500;
   const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${strategyMeta.symbol}&interval=4h&limit=${limit}`);
   const raw = await res.json();
 
