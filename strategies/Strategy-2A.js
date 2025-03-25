@@ -1,9 +1,10 @@
 export const strategyMeta = {
   name: '2A',
-  symbol: 'ETHUSDT',       // Możesz zmienić np. na BTCUSDT
-  interval: '4h',
+  symbol: 'BTCUSDT',      // ✅ para BTC/USDT
+  interval: '4h',          // ✅ interwał 4 godziny
   source: 'binance',
 };
+
 
 export async function getData() {
   const symbol = strategyMeta.symbol;
