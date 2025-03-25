@@ -1,15 +1,14 @@
 export const strategyMeta = {
   name: '2A',
-  symbol: 'BTCUSDT',      // ✅ para BTC/USDT
-  interval: '4h',          // ✅ interwał 4 godziny
+  symbol: 'BTCUSDT',
+  interval: '4h',
   source: 'binance',
 };
 
-
 export async function getData() {
-  const symbol = strategyMeta.symbol;
   const interval = strategyMeta.interval;
-  const limit = 1500; // ← więcej świec
+  const symbol = strategyMeta.symbol;
+  const limit = 1500;
 
   const response = await fetch(
     `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
@@ -21,7 +20,6 @@ export async function getData() {
   }
 
   const raw = await response.json();
-  console.log(`✅ Dane z Binance (${symbol}): ${raw.length} świec`);
 
   return raw.map(candle => ({
     time: candle[0] / 1000,
@@ -40,7 +38,7 @@ export async function getMarkers(candles) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'abc123XYZsecret', // 🔐 Twój klucz API
+          'Authorization': 'abc123XYZsecret',
         },
         body: JSON.stringify({ candles }),
       }
@@ -53,16 +51,9 @@ export async function getMarkers(candles) {
     }
 
     const markers = await res.json();
-
-    if (!Array.isArray(markers)) {
-      console.error('❌ Nieprawidłowy format odpowiedzi z backendu:', markers);
-      return [];
-    }
-
-    console.log(`✅ Markery odebrane (2A): ${markers.length}`);
-    return markers;
+    return Array.isArray(markers) ? markers : [];
   } catch (err) {
-    console.error('❌ Błąd w getMarkers (2A):', err);
+    console.error('❌ Błąd w getMarkers:', err);
     return [];
   }
 }
