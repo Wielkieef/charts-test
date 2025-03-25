@@ -23,7 +23,7 @@ export async function getData() {
 export async function getMarkers(candles) {
   try {
     const res = await fetch(
-      `https://europe-central2-big-bliss-342920.cloudfunctions.net/markers?strategy=3A`,
+      `https://europe-central2-big-bliss-342920.cloudfunctions.net/markers?strategy=3B`,
       {
         method: 'POST',
         headers: {
