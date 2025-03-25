@@ -22,29 +22,30 @@ import(`./strategies/Strategy-${strategyName}.js`)
 
     const candleSeries = chart.addCandlestickSeries();
 
-    async function loadChart() {
-      try {
-        const candles = await getData();
+async function loadChart() {
+  try {
+    const candles = await getData();
 
-        if (!Array.isArray(candles) || candles.length === 0) {
-          console.error('⛔ Brak danych świec:', candles);
-          return;
-        }
-
-        candleSeries.setData(candles);
-
-        const markers = await getMarkers(candles);
-        if (Array.isArray(markers)) {
-          candleSeries.setMarkers(markers);
-        } else {
-          console.warn('⚠️ Brak markerów');
-        }
-
-        console.log(`✅ Wczytano strategię ${strategyName}`);
-      } catch (err) {
-        console.error('❌ Błąd wczytywania:', err);
-      }
+    if (!Array.isArray(candles) || candles.length === 0) {
+      console.error('⛔ Brak danych świec:', candles);
+      return;
     }
+
+    candleSeries.setData(candles);
+    chart.timeScale().fitContent(); // 👈 TO JEST KLUCZOWE
+
+    const markers = await getMarkers(candles);
+    if (Array.isArray(markers)) {
+      candleSeries.setMarkers(markers);
+    } else {
+      console.warn('⚠️ Brak markerów');
+    }
+
+    console.log(`✅ Wczytano strategię ${strategyName}`);
+  } catch (err) {
+    console.error('❌ Błąd wczytywania:', err);
+  }
+}
 
     loadChart();
   })
