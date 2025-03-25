@@ -6,24 +6,30 @@ export const strategyMeta = {
 };
 
 export async function getData() {
-  const interval = '4h';
-  const symbol = 'BTCUSDT';
+  const total = 1500;
   const limit = 500;
+  const result = [];
 
-  const response = await fetch(
-    `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
-  );
+  let endTime = Date.now();
 
-  if (!response.ok) {
-    console.error('❌ Błąd pobierania danych z Binance:', await response.text());
-    return [];
+  while (result.length < total) {
+    const url = `https://api.binance.com/api/v3/klines?symbol=${strategyMeta.symbol}&interval=${strategyMeta.interval}&limit=${limit}&endTime=${endTime}`;
+    const response = await fetch(url);
+    const raw = await response.json();
+
+    if (!Array.isArray(raw) || raw.length === 0) break;
+
+    result.unshift(...raw);
+    endTime = raw[0][0] - 1;
+
+    if (result.length > 5000) break; // Bezpiecznik
   }
 
-  const raw = await response.json();
+  const sliced = result.slice(-total);
 
-  console.log(`✅ Dane z Binance: ${raw.length} świec`);
+  console.log(`✅ Dane z Binance: ${sliced.length} świec`);
 
-  return raw.map((candle) => ({
+  return sliced.map((candle) => ({
     time: candle[0] / 1000,
     open: parseFloat(candle[1]),
     high: parseFloat(candle[2]),
@@ -40,7 +46,7 @@ export async function getMarkers(candles) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'abc123XYZsecret', // <-- Twój klucz API tutaj (taki jak w zmiennej środowiskowej GCP)
+          'Authorization': 'abc123XYZsecret',
         },
         body: JSON.stringify({ candles }),
       }
