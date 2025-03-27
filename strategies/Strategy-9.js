@@ -1,10 +1,10 @@
 export const strategyMeta = {
-  symbol: '^GSPC', // SPX500 / S&P 500
+  symbol: '^GSPC', // S&P 500 symbol in Yahoo Finance
   interval: '1d',
 };
 
-// Yahoo API przez serwer proxy (bo Yahoo nie pozwala bezpośrednio na CORS)
-const PROXY_URL = 'https://yh-finance-api.vercel.app'; // sprawdzony open source proxy
+// Używamy publicznego proxy do Yahoo Finance (CORS-safe)
+const PROXY_URL = 'https://yh-finance-api.vercel.app';
 
 export async function getData() {
   const res = await fetch(`${PROXY_URL}/chart/${encodeURIComponent(strategyMeta.symbol)}?range=1y&interval=1d`);
