@@ -1,56 +1,53 @@
 export const strategyMeta = {
-  symbol: '^GSPC', // S&P 500 symbol in Yahoo Finance
+  symbol: '^GSPC',        // S&P500 z Yahoo Finance
   interval: '1d',
 };
 
-// Używamy publicznego proxy do Yahoo Finance (CORS-safe)
-const PROXY_URL = 'https://yh-finance-api.vercel.app';
-
 export async function getData() {
-  const res = await fetch(`${PROXY_URL}/chart/${encodeURIComponent(strategyMeta.symbol)}?range=1y&interval=1d`);
+  const url = `https://europe-central2-big-bliss-342920.cloudfunctions.net/chartDataFetcher?symbol=${encodeURIComponent(strategyMeta.symbol)}&range=1y&interval=1d`;
 
-  if (!res.ok) {
-    throw new Error('❌ Błąd pobierania danych z Yahoo Finance');
-  }
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('❌ Błąd pobierania danych z chmury');
 
-  const json = await res.json();
-
-  const timestamps = json.chart.result[0].timestamp;
-  const ohlc = json.chart.result[0].indicators.quote[0];
-
-  return timestamps.map((t, i) => ({
-    time: t,
-    open: ohlc.open[i],
-    high: ohlc.high[i],
-    low: ohlc.low[i],
-    close: ohlc.close[i],
-  }));
+  return await res.json();
 }
 
-export async function getMarkers(candles) {
-  try {
-    const res = await fetch(
-      `https://europe-central2-big-bliss-342920.cloudfunctions.net/markers?strategy=9`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'abc123XYZsecret',
-        },
-        body: JSON.stringify({ candles }),
-      }
-    );
+export function getMarkers(candles) {
+  const atrLength = 14;
+  const atrMultiplier = 2.0;
+  const emaLength = 20;
+  const trendFilterLength = 50;
+  const smaLength = 200;
+  const stopLossPercent = 10;
 
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error('❌ Marker error:', errorText);
-      return [];
-    }
+  const markers = [];
+  let inPosition = null;
+  let entryPrice = null;
 
-    const markers = await res.json();
-    return Array.isArray(markers) ? markers : [];
-  } catch (err) {
-    console.error('❌ Marker fetch error:', err);
-    return [];
-  }
-}
+  const ema = (arr, len) => {
+    const k = 2 / (len + 1);
+    let emaPrev = arr[0].close;
+    return arr.map((candle, i) => {
+      const price = candle.close;
+      emaPrev = price * k + emaPrev * (1 - k);
+      return emaPrev;
+    });
+  };
+
+  const sma = (arr, len) => {
+    return arr.map((_, i) => {
+      if (i < len - 1) return null;
+      const slice = arr.slice(i - len + 1, i + 1);
+      const sum = slice.reduce((acc, c) => acc + c.close, 0);
+      return sum / len;
+    });
+  };
+
+  const atr = (arr, len) => {
+    const tr = [];
+    for (let i = 1; i < arr.length; i++) {
+      const curr = arr[i];
+      const prev = arr[i - 1];
+      const highLow = curr.high - curr.low;
+      const highClose = Math.abs(curr.high - prev.close);
+      const
