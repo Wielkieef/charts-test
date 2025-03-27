@@ -1,22 +1,29 @@
 export const strategyMeta = {
-  symbol: 'SPX500',
+  symbol: '^GSPC', // SPX500 / S&P 500
   interval: '1d',
 };
 
+// Yahoo API przez serwer proxy (bo Yahoo nie pozwala bezpośrednio na CORS)
+const PROXY_URL = 'https://yh-finance-api.vercel.app'; // sprawdzony open source proxy
+
 export async function getData() {
-  const limit = 1500;
-  const interval = strategyMeta.interval;
-  const symbol = strategyMeta.symbol;
+  const res = await fetch(`${PROXY_URL}/chart/${encodeURIComponent(strategyMeta.symbol)}?range=1y&interval=1d`);
 
-  const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`);
-  const raw = await res.json();
+  if (!res.ok) {
+    throw new Error('❌ Błąd pobierania danych z Yahoo Finance');
+  }
 
-  return raw.map(d => ({
-    time: d[0] / 1000,
-    open: +d[1],
-    high: +d[2],
-    low: +d[3],
-    close: +d[4],
+  const json = await res.json();
+
+  const timestamps = json.chart.result[0].timestamp;
+  const ohlc = json.chart.result[0].indicators.quote[0];
+
+  return timestamps.map((t, i) => ({
+    time: t,
+    open: ohlc.open[i],
+    high: ohlc.high[i],
+    low: ohlc.low[i],
+    close: ohlc.close[i],
   }));
 }
 
