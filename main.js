@@ -11,31 +11,31 @@ import(`./strategies/Strategy-${strategyName}.js`)
       width: chartContainer.clientWidth,
       height: 500,
       layout: {
-        background: { color: '#1e1e1e' },   // ciemne tło
-        textColor: '#d1d4dc',              // jasny tekst
+        background: { color: '#e5e5e5' },   // Jasnoszare tło
+        textColor: '#000000',              // Czarny tekst (ceny, daty)
       },
       grid: {
-        vertLines: { color: '#2b2b2b' },
-        horzLines: { color: '#2b2b2b' },
+        vertLines: { color: '#d0d0d0' },
+        horzLines: { color: '#d0d0d0' },
       },
       crosshair: {
         mode: LightweightCharts.CrosshairMode.Normal,
       },
       priceScale: {
-        borderColor: '#555',
+        borderColor: '#cccccc',
       },
       timeScale: {
-        borderColor: '#555',
+        borderColor: '#cccccc',
       },
     });
 
     const candleSeries = chart.addCandlestickSeries({
-      upColor: '#4bffb5',
-      downColor: '#ff4976',
-      borderUpColor: '#4bffb5',
-      borderDownColor: '#ff4976',
-      wickUpColor: '#4bffb5',
-      wickDownColor: '#ff4976',
+      upColor: '#26a69a',
+      downColor: '#ef5350',
+      borderUpColor: '#26a69a',
+      borderDownColor: '#ef5350',
+      wickUpColor: '#26a69a',
+      wickDownColor: '#ef5350',
     });
 
     async function loadChart() {
@@ -48,7 +48,7 @@ import(`./strategies/Strategy-${strategyName}.js`)
         }
 
         candleSeries.setData(candles);
-        chart.timeScale().fitContent();
+        chart.timeScale().fitContent(); // 👈 Dopasuj wykres do dostępnych danych
 
         const markers = await getMarkers(candles);
         if (Array.isArray(markers)) {
