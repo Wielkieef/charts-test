@@ -11,41 +11,57 @@ import(`./strategies/Strategy-${strategyName}.js`)
       width: chartContainer.clientWidth,
       height: 500,
       layout: {
-        background: { color: '#f0f0f0' },
-        textColor: 'black',
+        background: { color: '#1e1e1e' },   // ciemne tło
+        textColor: '#d1d4dc',              // jasny tekst
       },
       grid: {
-        vertLines: { color: '#e0e0e0' },
-        horzLines: { color: '#e0e0e0' },
+        vertLines: { color: '#2b2b2b' },
+        horzLines: { color: '#2b2b2b' },
+      },
+      crosshair: {
+        mode: LightweightCharts.CrosshairMode.Normal,
+      },
+      priceScale: {
+        borderColor: '#555',
+      },
+      timeScale: {
+        borderColor: '#555',
       },
     });
 
-    const candleSeries = chart.addCandlestickSeries();
+    const candleSeries = chart.addCandlestickSeries({
+      upColor: '#4bffb5',
+      downColor: '#ff4976',
+      borderUpColor: '#4bffb5',
+      borderDownColor: '#ff4976',
+      wickUpColor: '#4bffb5',
+      wickDownColor: '#ff4976',
+    });
 
-async function loadChart() {
-  try {
-    const candles = await getData();
+    async function loadChart() {
+      try {
+        const candles = await getData();
 
-    if (!Array.isArray(candles) || candles.length === 0) {
-      console.error('⛔ Brak danych świec:', candles);
-      return;
+        if (!Array.isArray(candles) || candles.length === 0) {
+          console.error('⛔ Brak danych świec:', candles);
+          return;
+        }
+
+        candleSeries.setData(candles);
+        chart.timeScale().fitContent();
+
+        const markers = await getMarkers(candles);
+        if (Array.isArray(markers)) {
+          candleSeries.setMarkers(markers);
+        } else {
+          console.warn('⚠️ Brak markerów');
+        }
+
+        console.log(`✅ Wczytano strategię ${strategyName}`);
+      } catch (err) {
+        console.error('❌ Błąd wczytywania:', err);
+      }
     }
-
-    candleSeries.setData(candles);
-    chart.timeScale().fitContent(); // 👈 TO JEST KLUCZOWE
-
-    const markers = await getMarkers(candles);
-    if (Array.isArray(markers)) {
-      candleSeries.setMarkers(markers);
-    } else {
-      console.warn('⚠️ Brak markerów');
-    }
-
-    console.log(`✅ Wczytano strategię ${strategyName}`);
-  } catch (err) {
-    console.error('❌ Błąd wczytywania:', err);
-  }
-}
 
     loadChart();
   })
